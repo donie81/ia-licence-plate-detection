@@ -19,12 +19,15 @@ namespace IAproject
         public Form1()
         {
             InitializeComponent();
-            Image();
-            Hist_eq();
-            Val_eq();
-            Sobel();
-            Binarisation();
-            Dilation();
+            Image<Gray, Byte> img, img2, img3, img4, img5, img6;
+
+             img = Image();
+             imageBox1.Image = img;
+             img2 = Hist_eq(img);
+             img3 = Val_eq(img2);
+             img4 = Sobel(img3);
+             img5 = Binarisation(img4);
+             img6 = Dilation(img5);
             //Canny();
             //getRegion();
             //Raghav Anand 2010067
@@ -34,24 +37,15 @@ namespace IAproject
         }
 
         public Image<Gray, byte> Image()
-        {
-            
+        {          
             Image<Gray, byte> xyz = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
-            imageBox1.Image = xyz;
+            //imageBox1.Image = xyz;
             return xyz;
-            
-            //Raghav Anand 2010067
-            //Karan Gupte 2010037
-            //<--tester code
-            //new tester
-
-
         }
-        Image<Gray, byte> img2;
-        private Image<Gray,byte> Hist_eq()
+
+        private Image<Gray,byte> Hist_eq(Image<Gray,byte> img1)
        {
-           Image<Gray, byte> img1 = Image();
-            img2 = img1.Clone();
+            Image<Gray,Byte> img2 = img1.Clone();
             int[] hist = new int[256];
             int[] cdf = new int[256];
             int[] eq = new int[256];
@@ -91,15 +85,15 @@ namespace IAproject
                     img2[i, j] = temp;
                 }
             }
-            //imageBox2.Image = img2;
+            imageBox2.Image = img2;
             return img2;
         }
 
-        private Image<Gray,byte> Val_eq()
+        private Image<Gray, byte> Val_eq(Image<Gray, byte> img2)
         {
 
             //img2 = img1.Clone();
-            Image <Gray,byte> img3 = Hist_eq();
+            Image <Gray,byte> img3 = img2.Clone();
             for (int i = 1; i < img3.Height - 1; i++)
             {
                 for (int j = 1; j < img3.Width - 1; j++)
@@ -124,24 +118,24 @@ namespace IAproject
                     }
                 }
             }
-            //imageBox3.Image = img3;
+            imageBox3.Image = img3;
             return img3;
         }
 
-        private Image<Gray, byte> Sobel()
+        private Image<Gray, byte> Sobel(Image<Gray, byte> img3)
         {
             //img3 = img2.Clone();
             //img2 = img1.Clone();
            
-            Image <Gray,byte> img4 = Val_eq();
-            Image<Gray, byte> img5 = Hist_eq();
+            Image <Gray,byte> img4 =img3.Clone();
+            //Image<Gray, byte> img5 = Hist_eq();
             int[,] gx = new int[,] { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } };
             int[,] gy = new int[,] { { 1, 2, 1 }, { 0, 0, 0 }, { -1, -2, -1 } };
-            int[,] G = new int[img5.Height, img5.Width];
+            int[,] G = new int[img3.Height, img3.Width];
 
-            for (int i = 1; i < img5.Height - 1; i++)
+            for (int i = 1; i < img3.Height - 1; i++)
             {
-                for (int j = 1; j < img5.Width - 1; j++)
+                for (int j = 1; j < img3.Width - 1; j++)
                 {
                     float new_x = 0, new_y = 0;
                     float c;
@@ -151,8 +145,8 @@ namespace IAproject
                         for (int wi = 0; wi < 3; wi++)
                         {
                             //c = (float)(img2[i, j].Intensity);
-                            new_x = new_x + gx[hw, wi] * (float)(img2[i - (1 - hw), j - (1 - wi)].Intensity);
-                            new_y = new_y + gy[hw, wi] * (float)(img2[i - (1 - hw), j - (1 - wi)].Intensity);
+                            new_x = new_x + gx[hw, wi] * (float)(img3[i - (1 - hw), j - (1 - wi)].Intensity);
+                            new_y = new_y + gy[hw, wi] * (float)(img3[i - (1 - hw), j - (1 - wi)].Intensity);
                         }
                     }
                     Gray temp = new Gray();
@@ -160,13 +154,16 @@ namespace IAproject
                     img4[i, j] = temp;
                 }
             }
-            //imageBox4.Image = img4;
+            imageBox4.Image = img4;
             return img4;
 
         }
-        private Image<Gray,byte> Binarisation()
+        
+        private Image<Gray,byte> Binarisation(Image<Gray, byte> img6)
         {
-            Image<Gray, byte> img6 = Sobel();
+            //Image<Gray, byte> img6 = Sobel();
+            Image<Gray, byte> img4 = img6.Clone();
+
             for (int i = 1; i < img6.Height - 1; i++)
             {
                 for (int j = 1; j < img6.Width - 1; j++)
@@ -175,29 +172,51 @@ namespace IAproject
                     {
                         Gray temp = new Gray();
                         temp.Intensity = 255;
-                        img6[i, j] = temp;
+                        img4[i, j] = temp;
                     }
                     else
                     {
                         Gray temp = new Gray();
                         temp.Intensity = 0;
-                        img6[i, j] = temp;
+                        img4[i, j] = temp;
                     }
                 }
                 
             }
 
-            //imageBox5.Image = img6;
-            return img6;
+            imageBox5.Image = img4;
+            return img4;
         }
-        private Image<Gray,byte> Dilation()
+        private Image<Gray,byte> Dilation(Image<Gray, byte> img7)
         {
-            Image<Gray, byte> img7 = Binarisation();
+            //Image<Gray, byte> img = img7.Clone();
+           // Image<Gray, byte> img7 = Binarisation();
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(2, 2, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
             CvInvoke.cvDilate(img7.Ptr, img7.Ptr, structuring_element, 1);
             imageBox6.Image = img7;
             return img7;
         }
+        /*
+        static int count = 0;
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Image<Gray, Byte> img, img2, img3, img4;
+            count++;
+            if (count == 1)
+            {
+                img = Image();
+                img2 = Hist_eq(img);
+            }
+            else if (count == 2)
+            {
+                img3 = Val_eq(img2);
+            }
+            else if (count == 3)
+            {
+                img4 = Sobel(img3);
+            }
+                
+        }*/
 
         
 

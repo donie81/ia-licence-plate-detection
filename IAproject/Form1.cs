@@ -7,6 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using Emgu.CV;
+using Emgu.CV.Structure;
+using Emgu.Util;
+
 namespace IAproject
 {
     public partial class Form1 : Form

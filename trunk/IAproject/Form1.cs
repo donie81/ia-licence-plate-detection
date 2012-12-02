@@ -41,13 +41,13 @@ namespace IAproject
             //imageBox4.Image = img4;
             img5 = Binarisation(img4);
             //imageBox5.Image = img5;
+            imageBox4.Image = img5;
             img6 = Dilation(img5);
             //imageBox6.Image = img6;
-            imageBox4.Image = img6;
+            imageBox5.Image = img6;
             img7 = Canny(img6);
-            imageBox5.Image = img7;
-            img8 = getRegion(img7);
-            imageBox6.Image = img8;
+            imageBox6.Image = img7;
+
         }
 
         public Form1()
@@ -425,6 +425,8 @@ namespace IAproject
             foreach (LineSegment2D line in lines)
                 lineImage.Draw(line, new Gray(255), 2);
             //imageBox3.Image = lineImage;
+            //imageBox1.Image = img8;
+            getRegion(img7);
             return img7;
         }
         private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)

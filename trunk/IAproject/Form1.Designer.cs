@@ -155,14 +155,14 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(144, 677);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(136, 13);
+            this.label4.Size = new System.Drawing.Size(81, 13);
             this.label4.TabIndex = 9;
-            this.label4.Text = "Binarized and dilated image";
+            this.label4.Text = "Binarized image";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(578, 677);
+            this.label5.Location = new System.Drawing.Point(1017, 677);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(141, 13);
             this.label5.TabIndex = 10;
@@ -171,11 +171,11 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(1017, 677);
+            this.label6.Location = new System.Drawing.Point(619, 677);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(156, 13);
+            this.label6.Size = new System.Drawing.Size(71, 13);
             this.label6.TabIndex = 11;
-            this.label6.Text = "Result after applying getregion()";
+            this.label6.Text = "Dilated image";
             // 
             // Form1
             // 

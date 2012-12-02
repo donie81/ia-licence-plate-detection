@@ -189,12 +189,12 @@ namespace IAproject
         }
         private Image<Gray,byte> Dilation(Image<Gray, byte> img7)
         {
-            //Image<Gray, byte> img = img7.Clone();
-           // Image<Gray, byte> img7 = Binarisation();
+            Image<Gray, byte> img = img7.Clone();
+            //Image<Gray, byte> img7 = Binarisation();
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(2, 2, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
-            CvInvoke.cvDilate(img7.Ptr, img7.Ptr, structuring_element, 1);
-            imageBox6.Image = img7;
-            return img7;
+            CvInvoke.cvDilate(img.Ptr, img.Ptr, structuring_element, 1);
+            imageBox6.Image = img;
+            return img;
         }
         /*
         static int count = 0;

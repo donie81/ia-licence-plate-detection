@@ -16,25 +16,27 @@ namespace IAproject
 {
     public partial class Form1 : Form
     {
-        Image<Gray, Byte> img, img2, img3, img4, img5, img6, img7, img8;
+        Image<Gray, Byte> img,img1, img2, img3, img4, img5, img6, img7, img8;
 
         private void button1_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif";
+            openFileDialog1.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 img = new Image<Gray, byte>(openFileDialog1.FileName);
-                imageBox1.Image = img;
+                img1 = img.SmoothBlur(6,6, true);
+                imageBox1.Image = img1;
+                //img1._EqualizeHist();
             }           
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            img2 = Hist_eq(img);
-            //imageBox2.Image = img2;
+            img2 = Hist_eq(img1);
+            imageBox2.Image = img2;
             img3 = Val_eq(img2);
-            imageBox2.Image = img3;
+            //imageBox2.Image = img3;
             //imageBox3.Image = img3;
             img4 = Sobel(img3);
             imageBox3.Image = img4;
@@ -65,7 +67,9 @@ namespace IAproject
 
         private Image<Gray,byte> Hist_eq(Image<Gray,byte> img1)
        {
+
             Image<Gray,Byte> img2 = img1.Clone();
+            
             int[] hist = new int[256];
             int[] cdf = new int[256];
             int[] eq = new int[256];
@@ -105,7 +109,9 @@ namespace IAproject
                     img2[i, j] = temp;
                 }
             }
+            
             return img2;
+
         }
 
         private Image<Gray, byte> Val_eq(Image<Gray, byte> img2)
@@ -207,7 +213,12 @@ namespace IAproject
             Image<Gray, byte> img6 = img5.Clone();
             //Image<Gray, byte> img7 = Binarisation();
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(2, 2, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
-            CvInvoke.cvDilate(img6.Ptr, img6.Ptr, structuring_element, 1);
+
+            CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
+            //CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
+            //CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
+            //CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
+            //CvInvoke.cvDilate(img6.Ptr, img6.Ptr, structuring_element,1);
             return img6;
         }
         /*
@@ -479,7 +490,7 @@ namespace IAproject
                 {
                     if (img7[i, j].Intensity == 255)
                     {
-                        col = new Bgr(Color.LawnGreen);
+                        col = new Bgr(Color.Red);
                         imgReg[i, j] = col;
                     }
                     else

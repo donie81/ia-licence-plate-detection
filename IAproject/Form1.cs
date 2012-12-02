@@ -40,7 +40,8 @@ namespace IAproject
 
         public Image<Gray, byte> Image()
         {          
-            Image<Gray, byte> xyz = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            //Image<Gray, byte> xyz = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            Image<Gray, byte> xyz = new Image<Gray, byte>("C:/license_plate_6.jpg");
             //imageBox1.Image = xyz;
             return xyz;
         }
@@ -87,7 +88,7 @@ namespace IAproject
                     img2[i, j] = temp;
                 }
             }
-            imageBox2.Image = img2;
+            //imageBox2.Image = img2;
             return img2;
         }
 
@@ -333,7 +334,8 @@ namespace IAproject
                  }
 
              }*/
-            Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            //Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/license_plate_6.jpg");
             foreach (MCvBox2D box in boxList)
             {
                 double whRatio = (double)box.size.Width / box.size.Height;
@@ -412,8 +414,10 @@ namespace IAproject
             foreach (LineSegment2D line in lines)
                 lineImage.Draw(line, new Gray(255), 2);
             //imageBox3.Image = lineImage;
+            imageBox1.Image = img8;
             getRegion(img8);
-            imageBox1.Image = getRegion(img8);
+            imageBox2.Image = getRegion(img8);
+           
             return img8;
         }
         private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)
@@ -455,8 +459,10 @@ namespace IAproject
         {
             Bgr col = new Bgr();
             //Image<Gray, byte> img9 = Canny();
-            Image<Gray, byte> img1 = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
-            Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            //Image<Gray, byte> img1 = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            Image<Gray, byte> img1 = new Image<Gray, byte>("C:/license_plate_6.jpg");
+            //Image<Gray, byte> temp_load = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            Image<Gray, byte> temp_load = new Image<Gray, byte>("C:/license_plate_6.jpg");
             Image<Bgr, Byte> imgReg = new Image<Bgr, byte>(img1.Width, img1.Height);
             for (int i = 0; i < img1.Height; i++)
             {
@@ -469,7 +475,7 @@ namespace IAproject
                     }
                     else
                     {
-                        imgReg[i, j] = temp_load[i, j];
+                        img9[i, j] = temp_load[i, j];
                     }
                 }
             }

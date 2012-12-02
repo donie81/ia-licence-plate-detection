@@ -19,15 +19,17 @@ namespace IAproject
         public Form1()
         {
             InitializeComponent();
-            Image<Gray, Byte> img, img2, img3, img4, img5, img6;
+            Image<Gray, Byte> img, img2, img3, img4, img5, img6, img7,img8;
 
              img = Image();
-             imageBox1.Image = img;
+             //imageBox1.Image = img;
              img2 = Hist_eq(img);
              img3 = Val_eq(img2);
              img4 = Sobel(img3);
              img5 = Binarisation(img4);
              img6 = Dilation(img5);
+             img7 = Canny(img6);
+             //img8 = getRegion(img7);
             //Canny();
             //getRegion();
             //Raghav Anand 2010067
@@ -217,7 +219,266 @@ namespace IAproject
             }
                 
         }*/
+        private Image<Gray, byte> Canny(Image<Gray, byte> img9)
+        {
+            Image<Gray, byte> gray = img9.Clone();
+            Gray cannyThreshold = new Gray(180);
+            Gray cannyThresholdLinking = new Gray(120);
+            Image<Gray, Byte> cannyEdges = gray.Canny(cannyThreshold, cannyThresholdLinking);
 
+            IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(3, 3, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
+            CvInvoke.cvDilate(cannyEdges.Ptr, cannyEdges.Ptr, structuring_element, 1);
+
+
+            LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
+                1, //Distance resolution in pixel-related units
+                Math.PI / 45.0, //Angle resolution measured in radians.
+                20, //threshold
+                30, //min Line width
+                10 //gap between lines
+                )[0]; //Get the lines from the first channel
+            //imageBox4.Image = cannyEdges;
+            List<MCvBox2D> boxList = new List<MCvBox2D>();
+            //Console.Write("No of lines in Canny" + lines.Length);
+            MemStorage storage = new MemStorage();
+            Image<Gray, Byte> temp = new Image<Gray, byte>(gray.Size);
+            for (Contour<Point> contours = cannyEdges.FindContours(); contours != null; contours = contours.HNext)
+            {
+                //Contour<Point> currentContour = contours.ApproxPoly(contours.Perimeter * 0.05, storage);
+                Contour<Point> currentContour = contours.ApproxPoly(contours.Perimeter * 0.05, 2, storage);
+                if (currentContour.Area > 500)
+                {
+                    if (currentContour.Total == 4)
+                    {
+                        //temp.Draw(contours, new Gray(255), 2);
+                        //imageBox3.Image = temp;
+
+                        bool isRectangle = false;
+                        Point[] pts = currentContour.ToArray();
+                        LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
+
+                        //Console.Write("No of lines in current contour " + edges.Length);
+                        for (int i = 0; i < edges.Length; i++)
+                        {
+                            //temp.Draw(edges[i], new Gray(255), 2);
+                            //imageBox3.Image = temp;
+                            double angle = Math.Abs(
+                               edges[(i + 1) % edges.Length].GetExteriorAngleDegree(edges[i]));
+
+                            //temp.Draw(edges[i], new Gray(255), 2);
+                            //temp.Draw(edges[(i + 2) % edges.Length], new Gray(255), 2);
+                            //imageBox1.Image = temp;
+                            Point e1p1 = edges[i].P1;
+                            Point e1p2 = edges[i].P2;
+
+                            Point e2p1 = edges[(i + 2) % edges.Length].P1;
+                            Point e2p2 = edges[(i + 2) % edges.Length].P2;
+
+                            double diff1 = Math.Abs(edges[i].Length - edges[(i + 2) % edges.Length].Length);
+                            double diff2 = Math.Abs(edges[(i + 1) % edges.Length].Length - edges[(i + 3) % edges.Length].Length);
+
+                            if (diff1 / edges[i].Length <= 0.07 && diff1 / edges[(i + 2) % edges.Length].Length <= 0.07
+                               && diff2 / edges[(i + 1) % edges.Length].Length <= 0.07 && diff2 / edges[(i + 3) % edges.Length].Length <= 0.07)
+                            {
+                                //temp.Draw(edges[0], new Gray(255), 2);
+                                //temp.Draw(edges[1], new Gray(255), 2);
+                                //temp.Draw(edges[2], new Gray(255), 2);
+                                //temp.Draw(edges[3], new Gray(255), 2);
+                                //imageBox1.Image = temp;
+                                isRectangle = true;
+                                boxList.Add(currentContour.GetMinAreaRect());
+
+                            }
+
+
+                            if (edges[(i + 2) % edges.Length].Direction == edges[i].Direction)
+                            {
+                                //temp.Draw(edges[i], new Gray(255), 2);
+                                //temp.Draw(edges[(i + 2) % edges.Length], new Gray(255), 2);
+
+                                //imageBox1.Image = temp;
+                                isRectangle = true;
+                                boxList.Add(currentContour.GetMinAreaRect());
+
+                            }
+
+
+
+                            if ((angle > 30 && angle < 130))
+                            {
+                                //temp.Draw(edges[i], new Gray(255), 2);
+                                //imageBox1.Image = temp;
+                                isRectangle = true;
+                                boxList.Add(currentContour.GetMinAreaRect());
+
+
+                            }
+
+                            //Console.Write("\nAngle in current contour " + angle);
+
+
+
+                        }
+                    }
+                }
+            }
+            /* List<MCvBox2D> plateList = new List<MCvBox2D>();
+             foreach (MCvBox2D box in boxList)
+             {
+                 double ratio = box.size.Width / box.size.Height;
+                 if ((ratio > 3.5 && ratio < 4.5) || (ratio > 0.8 && ratio < 1.4))
+                 {
+                     Console.Write("\nshape:  " + box.size.Width / box.size.Height);
+                     plateList.Add(box);
+                 }
+
+             }*/
+            Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            foreach (MCvBox2D box in boxList)
+            {
+                double whRatio = (double)box.size.Width / box.size.Height;
+
+                Image<Bgr, Byte> plate = temp_load.Copy(box);
+                //CvInvoke.cvShowImage("plate",plate.Ptr);
+                //System.Threading.Thread.Sleep(3000);
+                //imageBox2.Image = plate;
+                int white_count = 0;
+                int black_count = 1;
+                double ratio1 = box.size.Width / box.size.Height;
+                double ratio2 = box.size.Height / box.size.Width;
+                //MessageBox.Show("ratio inside " + ratio1 + " " + ratio2);
+                int sz = (temp_load.Height * temp_load.Width) - (plate.Height * plate.Width);
+                //MessageBox.Show("Image Size " + temp_load.Height * temp_load.Width + " PLate Size " + plate.Height * plate.Width + "  " + sz);
+                if (sz <= 3 * (temp_load.Height + temp_load.Width))
+                {
+                    //MessageBox.Show("Size");
+                    continue;
+                }
+                for (int i = 0; i < plate.Height; i++)
+                {
+                    for (int j = 0; j < plate.Width; j++)
+                    {
+                        //Console.Write(plate[i, j].Intensity);
+                        double val = ((plate[i, j].Red * 299) + (plate[i, j].Green * 587) + (plate[i, j].Blue * 114)) / 1000;
+                        if (val > 180)
+                        {
+                            white_count++;
+                        }
+                        else if (val < 95)
+                        {
+                            black_count++;
+                        }
+                    }
+
+                }
+
+
+                //MessageBox.Show("plate width " + plate.Width);
+                // MessageBox.Show("plate height " + plate.Height);
+                //MessageBox.Show("plate size " + plate.Width*plate.Height);
+                //&& (white_count / (plate.Width * plate.Height)) >= 0.4) && (white_count / (plate.Width * plate.Height)) < 0.8)
+
+                if ((ratio1 > 3.3) || (ratio2 > 3.3))
+                {
+                    //MessageBox.Show("Black: " + ((double)(1.0 * black_count / (plate.Width * plate.Height))));
+                    //MessageBox.Show("White: " + ((double)(1.0 * white_count / (plate.Width * plate.Height))));
+                    //MessageBox.Show("ratio " + (double)(1.0 * white_count / (plate.Width * plate.Height)));
+                    if (((double)(1.0 * white_count / (plate.Width * plate.Height)) >= 0.3) && ((double)(1.0 * white_count / (plate.Width * plate.Height)) <= 0.8) && ((double)(1.0 * black_count / (plate.Width * plate.Height)) >= 0.1) && ((double)(1.0 * black_count / (plate.Width * plate.Height)) <= 0.4))
+                    {
+                        //MessageBox.Show("Black: " + black_count);
+                        //MessageBox.Show("White: " + white_count);
+                        //MessageBox.Show("ratio inside " + ratio1);
+                        //Image<Gray, Byte> filteredPlate = FilterPlate(plate);
+                        //Image<Gray, Byte> filtered = filteredPlate.Copy(box);
+                        double rot = 90;
+                        if (plate.Width < plate.Height)
+                        {
+                            plate = plate.Rotate((double)rot, new Bgr(255, 255, 255), false);
+                            //MessageBox.Show("Rot");
+                        }
+                        imageBox2.Image = plate;
+                        break;
+                    }
+                }
+
+            }
+            Image<Gray, Byte> img8;
+            Image<Gray, Byte> RectangleImage = gray.CopyBlank();
+            foreach (MCvBox2D box in boxList)
+                RectangleImage.Draw(box, new Gray(255), 2);
+            //imageBox2.Image = RectangleImage;
+            img8 = RectangleImage.Clone();
+            Image<Gray, Byte> lineImage = cannyEdges.CopyBlank();
+            foreach (LineSegment2D line in lines)
+                lineImage.Draw(line, new Gray(255), 2);
+            //imageBox3.Image = lineImage;
+            getRegion(img8);
+            imageBox1.Image = getRegion(img8);
+            return img8;
+        }
+        private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)
+        {
+            Image<Gray, Byte> thresh = plate.ThresholdBinaryInv(new Gray(120), new Gray(255));
+
+            Image<Gray, Byte> plateMask = new Image<Gray, byte>(plate.Size);
+            Image<Gray, Byte> plateCanny = plate.Canny(new Gray(100), new Gray(50));
+            MemStorage stor = new MemStorage();
+            {
+                plateMask.SetValue(255.0);
+                for (
+                   Contour<Point> contours = plateCanny.FindContours(
+                      Emgu.CV.CvEnum.CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE,
+                      Emgu.CV.CvEnum.RETR_TYPE.CV_RETR_EXTERNAL,
+                      stor);
+                   contours != null; contours = contours.HNext)
+                {
+                    Rectangle rect = contours.BoundingRectangle;
+                    if (rect.Height > (plate.Height >> 1))
+                    {
+                        rect.X -= 1; rect.Y -= 1; rect.Width += 2; rect.Height += 2;
+                        rect.Intersect(plate.ROI);
+
+                        plateMask.Draw(rect, new Gray(0.0), -1);
+                    }
+                }
+
+                thresh.SetValue(0, plateMask);
+            }
+
+            thresh._Erode(1);
+            thresh._Dilate(1);
+
+            return thresh;
+        }
+
+        private Image<Gray, byte> getRegion(Image<Gray, byte> img9)
+        {
+            Bgr col = new Bgr();
+            //Image<Gray, byte> img9 = Canny();
+            Image<Gray, byte> img1 = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
+            Image<Bgr, Byte> imgReg = new Image<Bgr, byte>(img1.Width, img1.Height);
+            for (int i = 0; i < img1.Height; i++)
+            {
+                for (int j = 0; j < img1.Width; j++)
+                {
+                    if (img9[i, j].Intensity == 255)
+                    {
+                        col = new Bgr(Color.LawnGreen);
+                        imgReg[i, j] = col;
+                    }
+                    else
+                    {
+                        imgReg[i, j] = temp_load[i, j];
+                    }
+                }
+            }
+
+            //imageBox7.Image = imgReg;
+            return img9;
+            //imageBox1.Image = img9;
+
+        }
         
 
         

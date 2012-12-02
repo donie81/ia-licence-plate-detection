@@ -20,12 +20,12 @@ namespace IAproject
 
         private void button1_Click(object sender, EventArgs e)
         {
+            openFileDialog1.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif";
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-
                 img = new Image<Gray, byte>(openFileDialog1.FileName);
                 imageBox1.Image = img;
-
             }           
         }
 

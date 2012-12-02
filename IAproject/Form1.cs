@@ -69,7 +69,7 @@ namespace IAproject
        {
 
             Image<Gray,Byte> img2 = img1.Clone();
-            
+            //img2._EqualizeHist();
             int[] hist = new int[256];
             int[] cdf = new int[256];
             int[] eq = new int[256];
@@ -107,8 +107,11 @@ namespace IAproject
                     Gray temp = new Gray();
                     temp.Intensity = eq[val];
                     img2[i, j] = temp;
+
                 }
             }
+            img2._EqualizeHist();
+            
             for (int i = 1; i < img2.Height - 1; i++)
             {
                 for (int j = 1; j < img2.Width - 1; j++)
@@ -133,12 +136,12 @@ namespace IAproject
                     }
                 }
             }
-            
+            //Image<Gray,byte> temp1 = Binarisation(img2);
             return img2;
 
         }
 
-        private Image<Gray, byte> Val_eq(Image<Gray, byte> img2)
+        /*private Image<Gray, byte> Val_eq(Image<Gray, byte> img2)
         {
 
             //img2 = img1.Clone();
@@ -168,7 +171,7 @@ namespace IAproject
                 }
             }
             return img3;
-        }
+        }*/
 
         private Image<Gray, byte> Sobel(Image<Gray, byte> img3)
         {
@@ -178,7 +181,7 @@ namespace IAproject
             Image <Gray,byte> img4 =img3.Clone();
             //Image<Gray, byte> img5 = Hist_eq();
             int[,] gx = new int[,] { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } };
-            int[,] gy = new int[,] { { 1, 2, 1 }, { 0, 0, 0 }, { -1, -2, -1 } };
+            int[,] gy = new int[,] { { -1, -2, -1 }, { 0, 0, 0 }, { 1, 2, 1 } };
             int[,] G = new int[img3.Height, img3.Width];
 
             for (int i = 1; i < img3.Height - 1; i++)
@@ -264,8 +267,8 @@ namespace IAproject
         private Image<Gray, byte> Canny(Image<Gray, byte> img6)
         {
             Image<Gray, byte> gray = img6.Clone();
-            Gray cannyThreshold = new Gray(180);
-            Gray cannyThresholdLinking = new Gray(120);
+            Gray cannyThreshold = new Gray(1000);//180
+            Gray cannyThresholdLinking = new Gray(500);//120
             Image<Gray, Byte> cannyEdges = gray.Canny(cannyThreshold, cannyThresholdLinking);
 
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(3, 3, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
@@ -379,10 +382,10 @@ namespace IAproject
             Image<Bgr, byte> temp_load = new Image<Bgr, byte>(openFileDialog1.FileName);
             foreach (MCvBox2D box in boxList)
             {
-                double whRatio = (double)box.size.Width / box.size.Height;
+                //double whRatio = (double)box.size.Width / box.size.Height;
 
                 Image<Bgr, Byte> plate = temp_load.Copy(box);
-                //CvInvoke.cvShowImage("plate",plate.Ptr);
+                /*//CvInvoke.cvShowImage("plate",plate.Ptr);
                 //System.Threading.Thread.Sleep(3000);
                 //imageBox2.Image = plate;
                 int white_count = 0;
@@ -413,7 +416,7 @@ namespace IAproject
                         }
                     }
 
-                }
+                }*/
 
 
                 //MessageBox.Show("plate width " + plate.Width);
@@ -451,15 +454,15 @@ namespace IAproject
                 RectangleImage.Draw(box, new Gray(255), 2);
             //imageBox2.Image = RectangleImage;
             img7 = RectangleImage.Clone();
-            Image<Gray, Byte> lineImage = cannyEdges.CopyBlank();
+            /*Image<Gray, Byte> lineImage = cannyEdges.CopyBlank();
             foreach (LineSegment2D line in lines)
-                lineImage.Draw(line, new Gray(255), 2);
+                lineImage.Draw(line, new Gray(255), 2);*/
             //imageBox3.Image = lineImage;
             //imageBox1.Image = img8;
             getRegion(img7);
             return img7;
         }
-        private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)
+        /*private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)
         {
             Image<Gray, Byte> thresh = plate.ThresholdBinaryInv(new Gray(120), new Gray(255));
 
@@ -492,7 +495,7 @@ namespace IAproject
             thresh._Dilate(1);
 
             return thresh;
-        }
+        }*/
 
         private Image<Gray, byte> getRegion(Image<Gray, byte> img7)
         {

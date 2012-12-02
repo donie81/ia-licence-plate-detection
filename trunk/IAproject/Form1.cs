@@ -16,35 +16,52 @@ namespace IAproject
 {
     public partial class Form1 : Form
     {
+        Image<Gray, Byte> img, img2, img3, img4, img5, img6, img7, img8;
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+
+                img = new Image<Gray, byte>(openFileDialog1.FileName);
+                imageBox1.Image = img;
+
+            }           
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            img2 = Hist_eq(img);
+            //imageBox2.Image = img2;
+            img3 = Val_eq(img2);
+            imageBox2.Image = img3;
+            //imageBox3.Image = img3;
+            img4 = Sobel(img3);
+            imageBox3.Image = img4;
+            //imageBox4.Image = img4;
+            img5 = Binarisation(img4);
+            //imageBox5.Image = img5;
+            img6 = Dilation(img5);
+            //imageBox6.Image = img6;
+            imageBox4.Image = img6;
+            img7 = Canny(img6);
+            imageBox5.Image = img7;
+            img8 = getRegion(img7);
+            imageBox6.Image = img8;
+        }
+
         public Form1()
         {
             InitializeComponent();
-            Image<Gray, Byte> img, img2, img3, img4, img5, img6, img7,img8;
-
-             img = Image();
-             //imageBox1.Image = img;
-             img2 = Hist_eq(img);
-             img3 = Val_eq(img2);
-             img4 = Sobel(img3);
-             img5 = Binarisation(img4);
-             img6 = Dilation(img5);
-             img7 = Canny(img6);
-             //img8 = getRegion(img7);
-            //Canny();
-            //getRegion();
-            //Raghav Anand 2010067
-            //Karan Gupte 2010037
-            //<--tester code
-            //new tester
         }
 
-        public Image<Gray, byte> Image()
+        /*public Image<Gray, byte> Image()
         {          
             //Image<Gray, byte> xyz = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
-            Image<Gray, byte> xyz = new Image<Gray, byte>("C:/license_plate_6.jpg");
+            Image<Gray, byte> xyz = new Image<Gray, byte>(openFileDialog1.FileName);
             //imageBox1.Image = xyz;
             return xyz;
-        }
+        }*/
 
         private Image<Gray,byte> Hist_eq(Image<Gray,byte> img1)
        {
@@ -88,7 +105,6 @@ namespace IAproject
                     img2[i, j] = temp;
                 }
             }
-            //imageBox2.Image = img2;
             return img2;
         }
 
@@ -121,7 +137,6 @@ namespace IAproject
                     }
                 }
             }
-            imageBox3.Image = img3;
             return img3;
         }
 
@@ -141,7 +156,7 @@ namespace IAproject
                 for (int j = 1; j < img3.Width - 1; j++)
                 {
                     float new_x = 0, new_y = 0;
-                    float c;
+                    //float c;
 
                     for (int hw = 0; hw < 3; hw++)
                     {
@@ -157,47 +172,43 @@ namespace IAproject
                     img4[i, j] = temp;
                 }
             }
-            imageBox4.Image = img4;
+            
             return img4;
-
         }
         
-        private Image<Gray,byte> Binarisation(Image<Gray, byte> img6)
+        private Image<Gray,byte> Binarisation(Image<Gray, byte> img4)
         {
             //Image<Gray, byte> img6 = Sobel();
-            Image<Gray, byte> img4 = img6.Clone();
+            Image<Gray, byte> img5 = img4.Clone();
 
-            for (int i = 1; i < img6.Height - 1; i++)
+            for (int i = 1; i < img4.Height - 1; i++)
             {
-                for (int j = 1; j < img6.Width - 1; j++)
+                for (int j = 1; j < img4.Width - 1; j++)
                 {
-                    if (img6[i, j].Intensity > 130)
+                    if (img4[i, j].Intensity > 130)
                     {
                         Gray temp = new Gray();
                         temp.Intensity = 255;
-                        img4[i, j] = temp;
+                        img5[i, j] = temp;
                     }
                     else
                     {
                         Gray temp = new Gray();
                         temp.Intensity = 0;
-                        img4[i, j] = temp;
+                        img5[i, j] = temp;
                     }
                 }
                 
             }
-
-            imageBox5.Image = img4;
-            return img4;
+            return img5;
         }
-        private Image<Gray,byte> Dilation(Image<Gray, byte> img7)
+        private Image<Gray,byte> Dilation(Image<Gray, byte> img5)
         {
-            Image<Gray, byte> img = img7.Clone();
+            Image<Gray, byte> img6 = img5.Clone();
             //Image<Gray, byte> img7 = Binarisation();
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(2, 2, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
-            CvInvoke.cvDilate(img.Ptr, img.Ptr, structuring_element, 1);
-            imageBox6.Image = img;
-            return img;
+            CvInvoke.cvDilate(img6.Ptr, img6.Ptr, structuring_element, 1);
+            return img6;
         }
         /*
         static int count = 0;
@@ -220,9 +231,9 @@ namespace IAproject
             }
                 
         }*/
-        private Image<Gray, byte> Canny(Image<Gray, byte> img9)
+        private Image<Gray, byte> Canny(Image<Gray, byte> img6)
         {
-            Image<Gray, byte> gray = img9.Clone();
+            Image<Gray, byte> gray = img6.Clone();
             Gray cannyThreshold = new Gray(180);
             Gray cannyThresholdLinking = new Gray(120);
             Image<Gray, Byte> cannyEdges = gray.Canny(cannyThreshold, cannyThresholdLinking);
@@ -335,7 +346,7 @@ namespace IAproject
 
              }*/
             //Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
-            Image<Bgr, byte> temp_load = new Image<Bgr, byte>("C:/license_plate_6.jpg");
+            Image<Bgr, byte> temp_load = new Image<Bgr, byte>(openFileDialog1.FileName);
             foreach (MCvBox2D box in boxList)
             {
                 double whRatio = (double)box.size.Width / box.size.Height;
@@ -404,21 +415,17 @@ namespace IAproject
                 }
 
             }
-            Image<Gray, Byte> img8;
+            Image<Gray, Byte> img7;
             Image<Gray, Byte> RectangleImage = gray.CopyBlank();
             foreach (MCvBox2D box in boxList)
                 RectangleImage.Draw(box, new Gray(255), 2);
             //imageBox2.Image = RectangleImage;
-            img8 = RectangleImage.Clone();
+            img7 = RectangleImage.Clone();
             Image<Gray, Byte> lineImage = cannyEdges.CopyBlank();
             foreach (LineSegment2D line in lines)
                 lineImage.Draw(line, new Gray(255), 2);
             //imageBox3.Image = lineImage;
-            imageBox1.Image = img8;
-            getRegion(img8);
-            imageBox2.Image = getRegion(img8);
-           
-            return img8;
+            return img7;
         }
         private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)
         {
@@ -455,39 +462,35 @@ namespace IAproject
             return thresh;
         }
 
-        private Image<Gray, byte> getRegion(Image<Gray, byte> img9)
+        private Image<Gray, byte> getRegion(Image<Gray, byte> img7)
         {
             Bgr col = new Bgr();
             //Image<Gray, byte> img9 = Canny();
             //Image<Gray, byte> img1 = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
-            Image<Gray, byte> img1 = new Image<Gray, byte>("C:/license_plate_6.jpg");
+            Image<Gray, byte> img1 = new Image<Gray, byte>(openFileDialog1.FileName);
             //Image<Gray, byte> temp_load = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
-            Image<Gray, byte> temp_load = new Image<Gray, byte>("C:/license_plate_6.jpg");
+            Image<Gray, byte> temp_load = new Image<Gray, byte>(openFileDialog1.FileName);
             Image<Bgr, Byte> imgReg = new Image<Bgr, byte>(img1.Width, img1.Height);
             for (int i = 0; i < img1.Height; i++)
             {
                 for (int j = 0; j < img1.Width; j++)
                 {
-                    if (img9[i, j].Intensity == 255)
+                    if (img7[i, j].Intensity == 255)
                     {
                         col = new Bgr(Color.LawnGreen);
                         imgReg[i, j] = col;
                     }
                     else
                     {
-                        img9[i, j] = temp_load[i, j];
+                        img7[i, j] = temp_load[i, j];
                     }
                 }
             }
 
             //imageBox7.Image = imgReg;
-            return img9;
+            return img7;
             //imageBox1.Image = img9;
 
         }
-        
-
-        
-
     }
 }

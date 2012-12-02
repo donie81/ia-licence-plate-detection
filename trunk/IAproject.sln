@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAproject", "IAproject\IApr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAproject_tester", "IAproject_tester\IAproject_tester.csproj", "{0A41BD8C-FE26-4EF5-9878-E62DDE405F79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAproject_test", "..\IAproject_test\IAproject_test\IAproject_test.csproj", "{540F0241-509E-45A9-BE44-C766EB08434B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAproject_test", "IAproject_test\IAproject_test.csproj", "{540F0241-509E-45A9-BE44-C766EB08434B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

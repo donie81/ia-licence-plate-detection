@@ -34,8 +34,8 @@ namespace IAproject
         private void button2_Click(object sender, EventArgs e)
         {
             img2 = Hist_eq(img1);
-            imageBox2.Image = img2;
-            img3 = Val_eq(img2);
+            //imageBox2.Image = img2;
+            img3 = img2.Clone();//Val_eq(img2);
             //imageBox2.Image = img3;
             //imageBox3.Image = img3;
             img4 = Sobel(img3);
@@ -107,6 +107,30 @@ namespace IAproject
                     Gray temp = new Gray();
                     temp.Intensity = eq[val];
                     img2[i, j] = temp;
+                }
+            }
+            for (int i = 1; i < img2.Height - 1; i++)
+            {
+                for (int j = 1; j < img2.Width - 1; j++)
+                {
+                    if (img2[i, j].Intensity < 140)
+                    {
+                        Gray temp = new Gray();
+                        temp.Intensity = 0;
+                        img2[i, j] = temp;
+                    }
+                    else if (img2[i, j].Intensity >= 140 && img2[i, j].Intensity < 180)
+                    {
+                        Gray temp = new Gray();
+                        temp.Intensity = 160;
+                        img2[i, j] = temp;
+                    }
+                    else
+                    {
+                        Gray temp = new Gray();
+                        temp.Intensity = 255;
+                        img2[i, j] = temp;
+                    }
                 }
             }
             
@@ -213,12 +237,7 @@ namespace IAproject
             Image<Gray, byte> img6 = img5.Clone();
             //Image<Gray, byte> img7 = Binarisation();
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(2, 2, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
-
             CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
-            //CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
-            //CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
-            //CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
-            //CvInvoke.cvDilate(img6.Ptr, img6.Ptr, structuring_element,1);
             return img6;
         }
         /*
@@ -402,28 +421,28 @@ namespace IAproject
                 //MessageBox.Show("plate size " + plate.Width*plate.Height);
                 //&& (white_count / (plate.Width * plate.Height)) >= 0.4) && (white_count / (plate.Width * plate.Height)) < 0.8)
 
-                if ((ratio1 > 3.3) || (ratio2 > 3.3))
-                {
+                //if ((ratio1 > 3.3) || (ratio2 > 3.3))
+                //{
                     //MessageBox.Show("Black: " + ((double)(1.0 * black_count / (plate.Width * plate.Height))));
                     //MessageBox.Show("White: " + ((double)(1.0 * white_count / (plate.Width * plate.Height))));
                     //MessageBox.Show("ratio " + (double)(1.0 * white_count / (plate.Width * plate.Height)));
-                    if (((double)(1.0 * white_count / (plate.Width * plate.Height)) >= 0.3) && ((double)(1.0 * white_count / (plate.Width * plate.Height)) <= 0.8) && ((double)(1.0 * black_count / (plate.Width * plate.Height)) >= 0.1) && ((double)(1.0 * black_count / (plate.Width * plate.Height)) <= 0.4))
-                    {
+                   // if (((double)(1.0 * white_count / (plate.Width * plate.Height)) >= 0.3) && ((double)(1.0 * white_count / (plate.Width * plate.Height)) <= 0.8) && ((double)(1.0 * black_count / (plate.Width * plate.Height)) >= 0.1) && ((double)(1.0 * black_count / (plate.Width * plate.Height)) <= 0.4))
+                    //{
                         //MessageBox.Show("Black: " + black_count);
                         //MessageBox.Show("White: " + white_count);
                         //MessageBox.Show("ratio inside " + ratio1);
                         //Image<Gray, Byte> filteredPlate = FilterPlate(plate);
                         //Image<Gray, Byte> filtered = filteredPlate.Copy(box);
                         double rot = 90;
-                        if (plate.Width < plate.Height)
+                        if (plate.Width <= plate.Height)
                         {
                             plate = plate.Rotate((double)rot, new Bgr(255, 255, 255), false);
                             //MessageBox.Show("Rot");
                         }
                         imageBox2.Image = plate;
                         break;
-                    }
-                }
+                    //}
+                //}
 
             }
             Image<Gray, Byte> img7;

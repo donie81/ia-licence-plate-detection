@@ -20,7 +20,7 @@ namespace IAproject
 
         private void button1_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
+            //openFileDialog1.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {

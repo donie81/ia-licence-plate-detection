@@ -16,7 +16,7 @@ namespace IAproject
 {
     public partial class Form1 : Form
     {
-        Image<Gray, Byte> img,img1, img2, img3, img4, img5, img6, img7, img8;
+        Image<Gray, Byte> img, img1, img2, img3, img4, img5, img6, img7, img8;
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -24,9 +24,14 @@ namespace IAproject
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                img = new Image<Gray, byte>(openFileDialog1.FileName);
+                //Load the image from file
+                Image<Bgr, Byte> img_bgr = new Image<Bgr, byte>(openFileDialog1.FileName);
+                imageBox1.Image = img_bgr;
+                //Convert the image to grayscale and filter out the noise
+                img = img_bgr.Convert<Gray, Byte>();//.PyrDown().PyrUp();
+                //img = new Image<Gray, byte>(openFileDialog1.FileName);
                 img1 = img.SmoothBlur(6,6, true);
-                imageBox1.Image = img1;
+                //imageBox1.Image = img1;
                 //img1._EqualizeHist();
             }           
         }
@@ -34,7 +39,7 @@ namespace IAproject
         private void button2_Click(object sender, EventArgs e)
         {
             img2 = Hist_eq(img1);
-            //imageBox2.Image = img2;
+            imageBox2.Image = img2;
             img3 = img2.Clone();//Val_eq(img2);
             //imageBox2.Image = img3;
             //imageBox3.Image = img3;
@@ -442,7 +447,7 @@ namespace IAproject
                             plate = plate.Rotate((double)rot, new Bgr(255, 255, 255), false);
                             //MessageBox.Show("Rot");
                         }
-                        imageBox2.Image = plate;
+                        imageBox7.Image = plate;
                         break;
                     //}
                 //}
@@ -460,7 +465,7 @@ namespace IAproject
             //imageBox3.Image = lineImage;
             //imageBox1.Image = img8;
             getRegion(img7);
-            return img7;
+            return img7;            
         }
         /*private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)
         {
@@ -525,6 +530,11 @@ namespace IAproject
             //imageBox7.Image = imgReg;
             return img7;
             //imageBox1.Image = img9;
+
+        }
+
+        private void imageBox6_Click(object sender, EventArgs e)
+        {
 
         }
     }

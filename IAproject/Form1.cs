@@ -442,7 +442,7 @@ namespace IAproject
                         //Image<Gray, Byte> filteredPlate = FilterPlate(plate);
                         //Image<Gray, Byte> filtered = filteredPlate.Copy(box);
                         double rot = 270;
-                        if (plate.Width > 24 && plate.Height > 36) //24 & 50
+                        if (plate.Width > 24 && plate.Height > 46) //(24) & (50 or 36)
                         {
                             if (plate.Width <= plate.Height)
                             {
@@ -462,6 +462,7 @@ namespace IAproject
                 RectangleImage.Draw(box, new Gray(255), 2);
             //imageBox2.Image = RectangleImage;
             img7 = RectangleImage.Clone();
+            //imageBox6.Image = img7;
             /*Image<Gray, Byte> lineImage = cannyEdges.CopyBlank();
             foreach (LineSegment2D line in lines)
                 lineImage.Draw(line, new Gray(255), 2);*/
@@ -536,9 +537,6 @@ namespace IAproject
 
         }
 
-        private void imageBox6_Click(object sender, EventArgs e)
-        {
-
-        }
+       
     }
 }

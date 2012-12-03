@@ -49,7 +49,7 @@ namespace IAproject
             img5 = Binarisation(img4);
             //imageBox5.Image = img5;
             imageBox4.Image = img5;
-            img6 = Dilation(img5);
+            img6 = Erosion(img5);
             //imageBox6.Image = img6;
             imageBox5.Image = img6;
             img7 = Canny(img6);
@@ -62,16 +62,8 @@ namespace IAproject
             InitializeComponent();
         }
 
-        /*public Image<Gray, byte> Image()
-        {          
-            //Image<Gray, byte> xyz = new Image<Gray, byte>("C:/Emgu/emgucv-windows-x86 2.4.0.1717/Emgu.CV.Example/LicensePlateRecognition/license-plate.jpg");
-            Image<Gray, byte> xyz = new Image<Gray, byte>(openFileDialog1.FileName);
-            //imageBox1.Image = xyz;
-            return xyz;
-        }*/
-
         private Image<Gray,byte> Hist_eq(Image<Gray,byte> img1)
-       {
+        {
 
             Image<Gray,Byte> img2 = img1.Clone();
             //img2._EqualizeHist();
@@ -146,38 +138,6 @@ namespace IAproject
 
         }
 
-        /*private Image<Gray, byte> Val_eq(Image<Gray, byte> img2)
-        {
-
-            //img2 = img1.Clone();
-            Image <Gray,byte> img3 = img2.Clone();
-            for (int i = 1; i < img3.Height - 1; i++)
-            {
-                for (int j = 1; j < img3.Width - 1; j++)
-                {
-                    if (img3[i, j].Intensity < 140)
-                    {
-                        Gray temp = new Gray();
-                        temp.Intensity = 0;
-                        img3[i, j] = temp;
-                    }
-                    else if (img3[i, j].Intensity >= 140 && img3[i, j].Intensity < 180)
-                    {
-                        Gray temp = new Gray();
-                        temp.Intensity = 160;
-                        img3[i, j] = temp;
-                    }
-                    else
-                    {
-                        Gray temp = new Gray();
-                        temp.Intensity = 255;
-                        img3[i, j] = temp;
-                    }
-                }
-            }
-            return img3;
-        }*/
-
         private Image<Gray, byte> Sobel(Image<Gray, byte> img3)
         {
             //img3 = img2.Clone();
@@ -240,7 +200,7 @@ namespace IAproject
             }
             return img5;
         }
-        private Image<Gray,byte> Dilation(Image<Gray, byte> img5)
+        private Image<Gray,byte> Erosion(Image<Gray, byte> img5)
         {
             Image<Gray, byte> img6 = img5.Clone();
             //Image<Gray, byte> img7 = Binarisation();
@@ -248,27 +208,7 @@ namespace IAproject
             CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
             return img6;
         }
-        /*
-        static int count = 0;
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Image<Gray, Byte> img, img2, img3, img4;
-            count++;
-            if (count == 1)
-            {
-                img = Image();
-                img2 = Hist_eq(img);
-            }
-            else if (count == 2)
-            {
-                img3 = Val_eq(img2);
-            }
-            else if (count == 3)
-            {
-                img4 = Sobel(img3);
-            }
-                
-        }*/
+        
         private Image<Gray, byte> Canny(Image<Gray, byte> img6)
         {
             Image<Gray, byte> gray = img6.Clone();
@@ -471,40 +411,6 @@ namespace IAproject
             getRegion(img7);
             return img7;            
         }
-        /*private static Image<Gray, Byte> FilterPlate(Image<Gray, Byte> plate)
-        {
-            Image<Gray, Byte> thresh = plate.ThresholdBinaryInv(new Gray(120), new Gray(255));
-
-            Image<Gray, Byte> plateMask = new Image<Gray, byte>(plate.Size);
-            Image<Gray, Byte> plateCanny = plate.Canny(new Gray(100), new Gray(50));
-            MemStorage stor = new MemStorage();
-            {
-                plateMask.SetValue(255.0);
-                for (
-                   Contour<Point> contours = plateCanny.FindContours(
-                      Emgu.CV.CvEnum.CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE,
-                      Emgu.CV.CvEnum.RETR_TYPE.CV_RETR_EXTERNAL,
-                      stor);
-                   contours != null; contours = contours.HNext)
-                {
-                    Rectangle rect = contours.BoundingRectangle;
-                    if (rect.Height > (plate.Height >> 1))
-                    {
-                        rect.X -= 1; rect.Y -= 1; rect.Width += 2; rect.Height += 2;
-                        rect.Intersect(plate.ROI);
-
-                        plateMask.Draw(rect, new Gray(0.0), -1);
-                    }
-                }
-
-                thresh.SetValue(0, plateMask);
-            }
-
-            thresh._Erode(1);
-            thresh._Dilate(1);
-
-            return thresh;
-        }*/
 
         private Image<Gray, byte> getRegion(Image<Gray, byte> img7)
         {

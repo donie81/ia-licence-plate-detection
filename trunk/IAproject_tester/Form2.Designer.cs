@@ -142,18 +142,18 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(578, 336);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(19, 13);
+            this.label2.Size = new System.Drawing.Size(109, 13);
             this.label2.TabIndex = 7;
-            this.label2.Text = "20";
+            this.label2.Text = "Canny Edge Detector";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(1017, 336);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(19, 13);
+            this.label3.Size = new System.Drawing.Size(106, 13);
             this.label3.TabIndex = 8;
-            this.label3.Text = "40";
+            this.label3.Text = "Sobel Edge Detector";
             // 
             // label4
             // 
@@ -184,16 +184,16 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(632, 333);
+            this.textBox1.Location = new System.Drawing.Point(693, 333);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.Size = new System.Drawing.Size(10, 20);
             this.textBox1.TabIndex = 12;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(1048, 333);
+            this.textBox2.Location = new System.Drawing.Point(1138, 333);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.Size = new System.Drawing.Size(10, 20);
             this.textBox2.TabIndex = 13;
             // 
             // textBox3

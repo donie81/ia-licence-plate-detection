@@ -273,7 +273,7 @@ namespace IAproject
         {
             Image<Gray, byte> gray = img6.Clone();
             Gray cannyThreshold = new Gray(1000);//180
-            Gray cannyThresholdLinking = new Gray(500);//120
+            Gray cannyThresholdLinking = new Gray(1000);//120
             Image<Gray, Byte> cannyEdges = gray.Canny(cannyThreshold, cannyThresholdLinking);
 
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(3, 3, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
@@ -441,14 +441,17 @@ namespace IAproject
                         //MessageBox.Show("ratio inside " + ratio1);
                         //Image<Gray, Byte> filteredPlate = FilterPlate(plate);
                         //Image<Gray, Byte> filtered = filteredPlate.Copy(box);
-                        double rot = 90;
-                        if (plate.Width <= plate.Height)
+                        double rot = 270;
+                        if (plate.Width > 24 && plate.Height > 36) //24 & 50
                         {
-                            plate = plate.Rotate((double)rot, new Bgr(255, 255, 255), false);
-                            //MessageBox.Show("Rot");
+                            if (plate.Width <= plate.Height)
+                            {
+                                plate = plate.Rotate((double)rot, new Bgr(255, 255, 255), false);
+                                //MessageBox.Show("Rot");
+                            }
+                            imageBox7.Image = plate;
+                            break;
                         }
-                        imageBox7.Image = plate;
-                        break;
                     //}
                 //}
 

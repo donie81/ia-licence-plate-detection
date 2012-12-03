@@ -101,7 +101,7 @@
             this.imageBox6.Size = new System.Drawing.Size(313, 262);
             this.imageBox6.TabIndex = 2;
             this.imageBox6.TabStop = false;
-            this.imageBox6.Click += new System.EventHandler(this.imageBox6_Click);
+            //this.imageBox6.Click += new System.EventHandler(this.imageBox6_Click);
             // 
             // button1
             // 

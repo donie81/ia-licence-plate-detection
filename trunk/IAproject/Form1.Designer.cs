@@ -43,6 +43,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.imageBox7 = new Emgu.CV.UI.ImageBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBox3)).BeginInit();
@@ -186,11 +187,19 @@
             this.label7.TabIndex = 12;
             this.label7.Text = "License Plate detected";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(1093, 529);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1362, 742);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.imageBox7);
             this.Controls.Add(this.label5);
@@ -236,6 +245,7 @@
         private System.Windows.Forms.Label label5;
         private Emgu.CV.UI.ImageBox imageBox7;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

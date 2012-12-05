@@ -1,4 +1,17 @@
-﻿using System;
+﻿/*
+ * 
+ *   License Plate Detector
+ *   By:
+ *   Raghav Anand 2010067
+ *   Karan Gupta  2010037
+ *   
+ */
+
+
+
+
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -44,10 +57,10 @@ namespace IAproject
             img3 = img2.Clone();
             img4 = Sobel_filter(img3);
             imageBox3.Image = img4.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);            
-            img5 = Binarisation(img4);
+            img5 = Binarization(img4);
             img6 = Erosion(img5);
             imageBox4.Image = img6.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-            img7 = Canny(img6);          
+            img7 = Contour(img6);          
         }
 
         public Form1()
@@ -122,7 +135,7 @@ namespace IAproject
             return img4;
         }
         
-        private Image<Gray,byte> Binarisation(Image<Gray, byte> img4)
+        private Image<Gray,byte> Binarization(Image<Gray, byte> img4)
         {
             Image<Gray, byte> img5 = img4.Clone();            
             for (int i = 1; i < img4.Height - 1; i++)
@@ -154,7 +167,7 @@ namespace IAproject
             return img6;
         }
         
-        private Image<Gray, byte> Canny(Image<Gray, byte> img6)
+        private Image<Gray, byte> Contour(Image<Gray, byte> img6)
         {
             Image<Gray, byte> gray = img6.Clone();
             Gray cannyThreshold = new Gray(1000);//180
@@ -187,18 +200,18 @@ namespace IAproject
                 {
                     if (currentContour.Total == 4) //The contour has 4 vertices, it is a rectangle
                     {
-                        /*Point[] pts = currentContour.ToArray();
+                        Point[] pts = currentContour.ToArray();
                         LineSegment2D[] linesarray = PointCollection.PolyLine(pts, true);
 
                         //Console.Write("No of lines in current contour " + edges.Length);
-                        for (int i = 0; i < 4linesarray.Length; i++)
+                        /*for (int i = 0; i < linesarray.Length; i++)
                         {
-                            textBox1.Text = Convert.ToString(linesarray.Length);
+                            //textBox1.Text = Convert.ToString(linesarray.Length);
 ;                            double angle = Math.Abs(linesarray[(i + 1) % linesarray.Length].GetExteriorAngleDegree(linesarray[i]));
 
-                            if ((angle > 60 && angle <= 90))
+                            if ((angle > 30 && angle < 130))
                             {
-                                boxList.Add(currentContour.GetMinAreaRect());
+                                rectangle_list.Add(currentContour.GetMinAreaRect());
                             }
                                                      
                         }*/

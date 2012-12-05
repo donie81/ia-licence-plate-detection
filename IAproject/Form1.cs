@@ -27,36 +27,27 @@ namespace IAproject
                 //Load the image from file
                 Image<Bgr, Byte> img_bgr = new Image<Bgr, byte>(openFileDialog1.FileName);
                 imageBox1.Image = img_bgr.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
+
                 //Convert the image to grayscale and filter out the noise
-                img = img_bgr.Convert<Gray, Byte>();//.PyrDown().PyrUp();
-                //img = new Image<Gray, byte>(openFileDialog1.FileName);
+                img = img_bgr.Convert<Gray, Byte>();
+
+                // Blur the image
                 img1 = img.SmoothBlur(6,6, true);
-                //imageBox1.Image = img1;
-                //img1._EqualizeHist();
+               
             }           
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             img2 = Hist_eq(img1);
-            //Image<Gray, byte> imgt;
             imageBox2.Image = img2.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-            img3 = img2.Clone();//Val_eq(img2);
-            //imageBox2.Image = img3;
-            //imageBox3.Image = img3;
+            img3 = img2.Clone();
             img4 = Sobel(img3);
-            imageBox3.Image = img4.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-            //imageBox4.Image = img4;
+            imageBox3.Image = img4.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);            
             img5 = Binarisation(img4);
-            //imageBox5.Image = img5;
-            
             img6 = Erosion(img5);
             imageBox4.Image = img6.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-            //imageBox6.Image = img6;
-            //imageBox5.Image = img6.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-            img7 = Canny(img6);
-            //imageBox6.Image = img7;
-
+            img7 = Canny(img6);          
         }
 
         public Form1()
@@ -65,11 +56,11 @@ namespace IAproject
         }
 
         private Image<Gray,byte> Hist_eq(Image<Gray,byte> img1)
-        {
-            
+        {            
             Image<Gray,Byte> img2 = img1.Clone();
+            //Histogram Equalization
             img2._EqualizeHist();
-            
+            //Normalize
             for (int i = 1; i < img2.Height - 1; i++)
             {
                 for (int j = 1; j < img2.Width - 1; j++)
@@ -94,21 +85,13 @@ namespace IAproject
                     }
                 }
             }
-            
-           
-            //Image<Gray,byte> temp1 = Binarisation(img2);
             return img2;
-
         }
 
         private Image<Gray, byte> Sobel(Image<Gray, byte> img3)
         {
-            //img3 = img2.Clone();
-            //img2 = img1.Clone();
-           
             Image <Gray,byte> img4 =img3.Clone();
-            
-            //Image<Gray, byte> img5 = Hist_eq();
+           
             int[,] gx = new int[,] { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } };
             int[,] gy = new int[,] { { -1, -2, -1 }, { 0, 0, 0 }, { 1, 2, 1 } };
             int[,] G = new int[img3.Height, img3.Width];
@@ -118,13 +101,10 @@ namespace IAproject
                 for (int j = 1; j < img3.Width - 1; j++)
                 {
                     float new_x = 0, new_y = 0;
-                    //float c;
-
                     for (int hw = 0; hw < 3; hw++)
                     {
                         for (int wi = 0; wi < 3; wi++)
                         {
-                            //c = (float)(img2[i, j].Intensity);
                             new_x = new_x + gx[hw, wi] * (float)(img3[i - (1 - hw), j - (1 - wi)].Intensity);
                             new_y = new_y + gy[hw, wi] * (float)(img3[i - (1 - hw), j - (1 - wi)].Intensity);
                         }
@@ -134,15 +114,13 @@ namespace IAproject
                     img4[i, j] = temp;
                 }
             }
-            
             return img4;
         }
         
         private Image<Gray,byte> Binarisation(Image<Gray, byte> img4)
         {
-            //Image<Gray, byte> img6 = Sobel();
-            Image<Gray, byte> img5 = img4.Clone();
-            
+           
+            Image<Gray, byte> img5 = img4.Clone();            
             for (int i = 1; i < img4.Height - 1; i++)
             {
                 for (int j = 1; j < img4.Width - 1; j++)
@@ -167,8 +145,6 @@ namespace IAproject
         private Image<Gray,byte> Erosion(Image<Gray, byte> img5)
         {
             Image<Gray, byte> img6 = img5.Clone();
-            
-            //Image<Gray, byte> img7 = Binarisation();
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(2, 2, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
             CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
             return img6;
@@ -180,34 +156,30 @@ namespace IAproject
             Gray cannyThreshold = new Gray(1000);//180
             Gray cannyThresholdLinking = new Gray(1000);//120
             Image<Gray, Byte> cannyEdges = gray.Canny(cannyThreshold, cannyThresholdLinking);
-
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(3, 3, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
             CvInvoke.cvDilate(cannyEdges.Ptr, cannyEdges.Ptr, structuring_element, 1);
 
 
-            LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
+            /*LineSegment2D[] lines = cannyEdges.HoughLinesBinary(
                 1, //Distance resolution in pixel-related units
                 Math.PI / 45.0, //Angle resolution measured in radians.
                 20, //threshold
                 30, //min Line width
                 10 //gap between lines
-                )[0]; //Get the lines from the first channel
-            //imageBox4.Image = cannyEdges;
+                )[0]; //Get the lines from the first channel8*/
+            
             List<MCvBox2D> boxList = new List<MCvBox2D>();
             //Console.Write("No of lines in Canny" + lines.Length);
             MemStorage storage = new MemStorage();
             Image<Gray, Byte> temp = new Image<Gray, byte>(gray.Size);
             for (Contour<Point> contours = cannyEdges.FindContours(); contours != null; contours = contours.HNext)
             {
-                //Contour<Point> currentContour = contours.ApproxPoly(contours.Perimeter * 0.05, storage);
+               
                 Contour<Point> currentContour = contours.ApproxPoly(contours.Perimeter * 0.05, 2, storage);
                 if (currentContour.Area > 500)
                 {
                     if (currentContour.Total == 4) //The contour has 4 vertices, it is a rectangle
                     {
-                        //temp.Draw(contours, new Gray(255), 2);
-                        //imageBox3.Image = temp;
-
                         bool isRectangle = false;
                         Point[] pts = currentContour.ToArray();
                         LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
@@ -215,19 +187,14 @@ namespace IAproject
                         //Console.Write("No of lines in current contour " + edges.Length);
                         for (int i = 0; i < edges.Length; i++)
                         {
-                            //temp.Draw(edges[i], new Gray(255), 2);
-                            //imageBox3.Image = temp;
+                            
                             double angle = Math.Abs(
                                edges[(i + 1) % edges.Length].GetExteriorAngleDegree(edges[i]));
 
                             if ((angle > 30 && angle < 130))
                             {
-                                //temp.Draw(edges[i], new Gray(255), 2);
-                                //imageBox1.Image = temp;
                                 isRectangle = true;
                                 boxList.Add(currentContour.GetMinAreaRect());
-
-
                             }
                                                      
                         }
@@ -238,8 +205,6 @@ namespace IAproject
             Image<Bgr, byte> temp_load = new Image<Bgr, byte>(openFileDialog1.FileName);
             foreach (MCvBox2D box in boxList)
             {
-                //double whRatio = (double)box.size.Width / box.size.Height;
-
                 Image<Bgr, Byte> plate = temp_load.Copy(box);
                 double rot = 270;
                 if (plate.Width > 24 && plate.Height > 37) //(24) & (50 or 36)
@@ -247,20 +212,15 @@ namespace IAproject
                             if (plate.Width <= plate.Height)
                             {
                                 plate = plate.Rotate((double)rot, new Bgr(255, 255, 255), false);
-                                //MessageBox.Show("Rot");
                             }
                             imageBox7.Image = plate;
                             break;
                         }
-                    //}
-                //}
-
-            }
+                }
             Image<Gray, Byte> img7;
             Image<Gray, Byte> RectangleImage = gray.CopyBlank();
             foreach (MCvBox2D box in boxList)
                 RectangleImage.Draw(box, new Gray(255), 2);
-            //imageBox2.Image = RectangleImage;
             img7 = RectangleImage.Clone();
             
             Bgr col = new Bgr();
@@ -276,14 +236,12 @@ namespace IAproject
                     }
                     else
                     {
-                        //img7.Convert<Gray, byte>();
                         imgReg[i, j] = temp_load[i, j];
                     }
                 }
             }
 
             imageBox6.Image = imgReg.Resize(315, 266, Emgu.CV.CvEnum.INTER.CV_INTER_LINEAR);
-            //getRegion(img7);
             return img7;            
         }
 

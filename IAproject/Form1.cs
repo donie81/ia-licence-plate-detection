@@ -20,7 +20,7 @@ namespace IAproject
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //openFileDialog1.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
+            openFileDialog1.Filter = "JPG Files (*.jpg)|*.jpg|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|GIF Files (*.gif)|*.gif";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -64,9 +64,11 @@ namespace IAproject
 
         private Image<Gray,byte> Hist_eq(Image<Gray,byte> img1)
         {
-
+            
             Image<Gray,Byte> img2 = img1.Clone();
-            //img2._EqualizeHist();
+            img2._EqualizeHist();
+            
+            /*
             int[] hist = new int[256];
             int[] cdf = new int[256];
             int[] eq = new int[256];
@@ -108,6 +110,8 @@ namespace IAproject
                 }
             }
             img2._EqualizeHist();
+            */
+            
             
             for (int i = 1; i < img2.Height - 1; i++)
             {
@@ -144,6 +148,7 @@ namespace IAproject
             //img2 = img1.Clone();
            
             Image <Gray,byte> img4 =img3.Clone();
+            
             //Image<Gray, byte> img5 = Hist_eq();
             int[,] gx = new int[,] { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } };
             int[,] gy = new int[,] { { -1, -2, -1 }, { 0, 0, 0 }, { 1, 2, 1 } };
@@ -178,7 +183,7 @@ namespace IAproject
         {
             //Image<Gray, byte> img6 = Sobel();
             Image<Gray, byte> img5 = img4.Clone();
-
+            
             for (int i = 1; i < img4.Height - 1; i++)
             {
                 for (int j = 1; j < img4.Width - 1; j++)
@@ -203,6 +208,7 @@ namespace IAproject
         private Image<Gray,byte> Erosion(Image<Gray, byte> img5)
         {
             Image<Gray, byte> img6 = img5.Clone();
+            
             //Image<Gray, byte> img7 = Binarisation();
             IntPtr structuring_element = CvInvoke.cvCreateStructuringElementEx(2, 2, 1, 1, CV_ELEMENT_SHAPE.CV_SHAPE_ELLIPSE, IntPtr.Zero);
             CvInvoke.cvErode(img6.Ptr, img6.Ptr, structuring_element, 1);
@@ -238,7 +244,7 @@ namespace IAproject
                 Contour<Point> currentContour = contours.ApproxPoly(contours.Perimeter * 0.05, 2, storage);
                 if (currentContour.Area > 500)
                 {
-                    if (currentContour.Total == 4)
+                    if (currentContour.Total == 4) //The contour has 4 vertices, it is a rectangle
                     {
                         //temp.Draw(contours, new Gray(255), 2);
                         //imageBox3.Image = temp;

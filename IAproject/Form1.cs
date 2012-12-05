@@ -73,6 +73,7 @@ namespace IAproject
             Image<Gray,Byte> img2 = img1.Clone();
             //Histogram Equalization
             img2._EqualizeHist();
+
             //Normalize
             for (int i = 1; i < img2.Height - 1; i++)
             {
@@ -198,13 +199,13 @@ namespace IAproject
                 Contour<Point> currentContour = contours.ApproxPoly(contours.Perimeter * 0.05, 2, storage);
                 if (currentContour.Area > 500)
                 {
-                    if (currentContour.Total == 4) //The contour has 4 vertices, it is a rectangle
+                    if (currentContour.Total == 4) // If the contour has 4 vertices, then it is a rectangle.
                     {
-                        Point[] pts = currentContour.ToArray();
+                        /*Point[] pts = currentContour.ToArray();
                         LineSegment2D[] linesarray = PointCollection.PolyLine(pts, true);
 
-                        //Console.Write("No of lines in current contour " + edges.Length);
-                        /*for (int i = 0; i < linesarray.Length; i++)
+                        //Console.Write("The number of lines in current contour " + linesarray.Length);
+                        for (int i = 0; i < linesarray.Length; i++)
                         {
                             //textBox1.Text = Convert.ToString(linesarray.Length);
 ;                            double angle = Math.Abs(linesarray[(i + 1) % linesarray.Length].GetExteriorAngleDegree(linesarray[i]));
@@ -215,6 +216,7 @@ namespace IAproject
                             }
                                                      
                         }*/
+                        // Add this rectangle to the list of rectangles
                         rectangle_list.Add(currentContour.GetMinAreaRect());
                     }
                 }
@@ -223,6 +225,7 @@ namespace IAproject
             Image<Bgr, byte> original = new Image<Bgr, byte>(openFileDialog1.FileName);
             foreach (MCvBox2D rectangle in rectangle_list)
             {
+                // Reducing the plate candidates
                 Image<Bgr, Byte> plate = original.Copy(rectangle);
                 double rotate_angle = 270;
                 if (plate.Width > 24 && plate.Height > 37) //(24) & (50 or 36)
@@ -241,9 +244,10 @@ namespace IAproject
             foreach (MCvBox2D rectangle in rectangle_list)
                 RectangleImage.Draw(rectangle, new Gray(255), 2);
             img7 = RectangleImage.Clone();
-            
+
+            // Colouring the rectangles            
             Bgr coloured_region = new Bgr();
-            Image<Bgr, Byte> final = new Image<Bgr, byte>(img1.Width, img1.Height);
+            Image<Bgr, Byte> final = new Image<Bgr, byte>(img1.Width, img1.Height);           
             for (int i = 0; i < img7.Height; i++)
             {
                 for (int j = 0; j < img7.Width; j++)
